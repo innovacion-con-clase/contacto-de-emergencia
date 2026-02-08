@@ -1,378 +1,294 @@
-import React, { useState } from 'react';
-import { 
-  BookOpen, 
-  Wind, 
-  Shield, 
-  Star, 
-  ChevronRight, 
-  ChevronLeft, 
-  CheckCircle2, 
-  Lock, 
-  Heart, 
-  Sun,
-  CloudRain,
-  MessageCircle,
-  PenLine,
-  Smile,
-  Zap,
-  Navigation,
-  Anchor,
-  Home
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Casa de Juanita | El Contacto de Emergencia #23</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Smooth height transition for header */
+        #main-header { transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        .header-expanded { height: 420px; }
+        .header-collapsed { height: 112px; } /* 28 units */
 
-const App = () => {
-  const [currentStep, setCurrentStep] = useState(null);
-  const [completedSteps, setCompletedSteps] = useState([]);
-  const [showJournal, setShowJournal] = useState(false);
-  const [journalEntry, setJournalEntry] = useState("");
-  const [isJourneyStarted, setIsJourneyStarted] = useState(false);
+        /* Animation for modals */
+        .modal-enter { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
 
-  const steps = [
-    {
-      id: 0,
-      type: "Monólogo",
-      title: "Ovejas con Traje de Marca",
-      icon: <Smile className="w-5 h-5" />,
-      duration: "2 min",
-      buttonText: "¡Soy una oveja, lo admito!",
-      content: {
-        verse: "Reflexión: La Oveja de Ciudad",
-        scripture: "Lobos de Wall Street vs. Ovejas perdidas",
-        body: "¿Ustedes han visto a las ovejas? Son animales... especiales. Yo antes pensaba que las ovejas eran como los perros, que si les tiras una rama, te la traen. ¡No! La oveja es el único animal que puede perderse en un jardín de dos por dos metros.\n\nUna vez vi a un tipo en un aeropuerto, estresado, con tres maletas, dos celulares, una tablet y gritándole a alguien por el manos libres. El hombre estaba colapsando. Y pensé: 'Esa es una oveja con traje de marca'. Nos creemos lobos de Wall Street, nos creemos leones de la industria, pero a la primera crisis, balamos como una oveja que se perdió camino al bebedero.\n\nHoy no vengo a hablarte de cómo ser un león. Vengo a decirte que está bien ser oveja, siempre y cuando tengas al Pastor correcto en el contacto de emergencia.",
-        reflection: "Oye, ¿cuántas veces intentaste rugir esta semana cuando lo que necesitabas era simplemente balar y llamar al Pastor?"
-      }
-    },
-    {
-      id: 1,
-      type: "La Primicia",
-      title: "El Salmo más Amado",
-      icon: <Heart className="w-5 h-5" />,
-      duration: "2 min",
-      buttonText: "¡Dame el manual de supervivencia!",
-      content: {
-        verse: "Juan 10:11, 14",
-        scripture: "“Yo soy el buen pastor... y conozco mis ovejas y ellas me conocen”.",
-        body: "¡Escucha esto! El Salmo 23 es uno de los más famosos y citados en la Biblia. También es uno de los pasajes que más se memoriza y aprecia. Pero no es solo poesía para funerales, ¡es un manual de supervivencia!\n\nA medida que leas este salmo, notarás tres cosas impresionantes que hace el Buen Pastor por ti: Proveer, Proteger y Prometer. Prepárate, porque esto va a cambiar tu perspectiva de la crisis.",
-        reflection: "El Pastor te conoce por nombre, no por tu puesto en el organigrama. ¿Estás listo para escucharlo?"
-      }
-    },
-    {
-      id: 2,
-      type: "El Suministro",
-      title: "Cero Carencias",
-      icon: <Zap className="w-5 h-5" />,
-      duration: "4 min",
-      buttonText: "¡Nada me faltará!",
-      content: {
-        verse: "Salmo 23:1",
-        scripture: "“El Señor es mi pastor, nada me faltará”.",
-        body: "¡Vaya! La palabra “faltar” aquí significa “carecer”. Debido a que nuestro Pastor, Jesús, provee todo lo que necesitamos, ¡no carecemos de nada! Y aunque tal vez no recibas todo lo que quieres (porque a veces pedimos tonterías), Él nos da todo lo que necesitamos.\n\nEs muy fácil sentir que necesitas esforzarte más y sacrificarte hasta colapsar para que las cosas mejoren. Sin embargo, el Señor nos muestra que Él quiere que pongamos nuestra mirada en Él. Cuando confías, Él abre puertas que ningún hombre puede cerrar y trae oportunidades que no estabas buscando.",
-        reflection: "Deja de mirar la escasez en tu mano y empieza a mirar la abundancia en la Suya."
-      }
-    },
-    {
-      id: 3,
-      type: "Restauración",
-      title: "Spa para el Alma",
-      icon: <Wind className="w-5 h-5" />,
-      duration: "5 min",
-      buttonText: "¡Restaura mi alma ahora!",
-      content: {
-        verse: "Salmo 23:2-3",
-        scripture: "“En lugares de verdes pastos me hace descansar... Él restaura mi alma”.",
-        body: "Los verdes pastos se refieren a la riqueza de la Palabra de Dios, y las aguas de reposo se refieren a su paz. A medida que te alimentas de su Palabra y permaneces en el Señor, Él te llenará de contentamiento y te guiará con su paz.\n\nEn la vida, todos pasamos por cosas que desgastan nuestra mente y emociones. Por eso, nuestra alma necesita ser restaurada. Tu Buen Pastor no solamente quiere dejarte como estabas antes del golpe, ¡Él quiere refrescar tu alma hasta llevarla a un lugar mucho mejor!",
-        reflection: "¿Qué parte de tu alma está hoy 'desgastada'? Entrégasela al Pastor ahora mismo."
-      }
-    },
-    {
-      id: 4,
-      type: "Dirección",
-      title: "GPS de Justicia",
-      icon: <Navigation className="w-5 h-5" />,
-      duration: "3 min",
-      buttonText: "¡Sigo Tus pasos, Pastor!",
-      content: {
-        verse: "Salmo 23:3",
-        scripture: "“Me guía por senderos de justicia por amor de Su nombre”.",
-        body: "¡Queridos! Justicia significa estar en buena relación con Dios. Debido a la gracia y al sacrificio de Jesús en la cruz, Dios te ve a través del lente de su Hijo. Eso te guía a tener una buena relación con Él.\n\nY continúas andando en justicia cuando dejas que Jesús te lleve de tal manera que hasta tus pensamientos y acciones lo complacen. Al permitir que tu Buen Pastor te guíe, puedes permanecer en una relación estrecha con Él y, créeme, nada te faltará.",
-        reflection: "Si Dios es tu GPS, ¿por qué sigues tratando de manejar tú el vehículo en medio del tráfico?"
-      }
-    },
-    {
-      id: 5,
-      type: "Defensa",
-      title: "Caminando entre Sombras",
-      icon: <Shield className="w-5 h-5" />,
-      duration: "4 min",
-      buttonText: "¡No tengo miedo!",
-      content: {
-        verse: "Salmo 23:4",
-        scripture: "“Aunque pase por el valle de sombra... no temeré mal alguno”.",
-        body: "Escucha bien: incluso en el valle de sombra de muerte, no debemos temer porque Dios está allí. Para la mayoría, la muerte es el temor más grande. Un amigo me dijo que no le temía a la muerte, sino a las serpientes... ¡pero en realidad temía morir por la mordedura! \n\nLo cierto es que Jesús aniquiló a la muerte cuando la conquistó en la cruz. Él quiere que descanses en la seguridad de que Él es nuestro protector. ¡Si Él está contigo, la sombra no tiene poder!",
-        reflection: "El valle tiene salida. La sombra de una crisis no puede morderte si el Pastor está cerca."
-      }
-    },
-    {
-      id: 6,
-      type: "La Herencia",
-      title: "Tus Guardaespaldas",
-      icon: <Star className="w-5 h-5" />,
-      duration: "3 min",
-      buttonText: "¡Recibo mis escoltas del Cielo!",
-      content: {
-        verse: "Salmo 23:6",
-        scripture: "“Ciertamente el bien y la misericordia me seguirán...”.",
-        body: "La palabra “ciertamente” significa “con toda seguridad”. ¡Es un hecho! No solamente recibes provisión y protección, sino que también obtienes bondad, misericordia y vida eterna. \n\nSi tuviera que resumir el Salmo 23, diría: “¡Recibes todo esto y la eternidad en el cielo con tu Salvador!”. ¿No te parece maravilloso? Tienes dos guardaespaldas celestiales siguiéndote los talones todos los días.",
-        reflection: "Mira atrás por un segundo... ¿puedes ver la bondad de Dios persiguiéndote por los pasillos de tu vida?"
-      }
-    },
-    {
-      id: 7,
-      type: "El Operativo",
-      title: "Rescate en el Día Gris",
-      icon: <CloudRain className="w-5 h-5" />,
-      duration: "4 min",
-      buttonText: "¡Viene a mi rescate!",
-      content: {
-        verse: "Ezequiel 34:12",
-        scripture: "“Como un pastor vela... así Yo velaré por Mis ovejas...”.",
-        body: "Lo que Dios dice es: “Escuchen, yo voy en camino”. Llegaré y las libraré de todo lo que las ha mantenido atadas. Y se darán cuenta cuando lo haga porque será un día nublado y sombrío.\n\nEso es lo que Jesús hizo por nosotros. Dio su vida en un día sombrío para que pudiéramos ser libertados del estrés, la ansiedad, el temor y hasta de la muerte. Él promete protección y provisión para ti. Solamente tienes que reconocer su voz.",
-        reflection: "¿Estás listo para dejarte rescatar de ese día gris?"
-      }
-    },
-    {
-      id: 8,
-      type: "Conexión",
-      title: "Hablando con el Jefe",
-      icon: <Anchor className="w-5 h-5" />,
-      duration: "2 min",
-      buttonText: "Amén y Amén",
-      content: {
-        verse: "La Oración del Corazón",
-        scripture: "Amén.",
-        body: "Jesús, gracias por ser mi Buen Pastor y dar tu vida por mí. Gracias por prometer protección y provisión para mí. Estoy muy agradecido contigo porque sabes quién soy y me amas de todos modos. Ayúdame a escuchar tu voz y a seguirte cada día de mi vida. En el nombre de Jesús, amén.",
-        reflection: "Tómate un café con el Pastor ahora. Habla con Él sin filtros."
-      }
-    }
-  ];
+        .step-current { border-color: rgba(245, 158, 11, 0.3); background-color: rgba(24, 24, 27, 0.5); }
+        .step-locked { opacity: 0.2; transform: scale(0.95); cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 antialiased">
 
-  const handleStepClick = (step) => {
-    setIsJourneyStarted(true);
-    setCurrentStep(step);
-  };
-
-  const handleComplete = (id) => {
-    if (!completedSteps.includes(id)) {
-      setCompletedSteps([...completedSteps, id]);
-    }
-    setCurrentStep(null);
-  };
-
-  return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-zinc-950 text-zinc-100 font-sans shadow-2xl relative overflow-hidden border-x border-zinc-800">
-      
-      {/* Portada Adaptativa - La Casa de Juanita */}
-      <header className={`relative transition-all duration-700 ease-in-out overflow-hidden flex flex-col justify-end ${isJourneyStarted ? 'h-28' : 'h-[420px]'}`}>
-        {/* Imagen Oficial de Portada */}
-        <div className="absolute inset-0 z-0 bg-zinc-900">
-          <img 
-            src="https://i.imgur.com/LGE2vU3.png" 
-            alt=""
-            className={`w-full h-full object-cover transition-all duration-1000 ${isJourneyStarted ? 'opacity-30 scale-100 blur-sm' : 'opacity-90 scale-105 hover:scale-110'}`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-transparent to-transparent"></div>
-        </div>
-
-        <div className={`px-6 transition-all duration-500 relative z-10 ${isJourneyStarted ? 'pb-4' : 'pb-10'}`}>
-          <h2 className={`text-amber-500 font-black uppercase tracking-[0.5em] flex items-center gap-2 drop-shadow-lg transition-all ${isJourneyStarted ? 'text-[7px] mb-0.5 opacity-60' : 'text-[10px] mb-3'}`}>
-              <Home className={`${isJourneyStarted ? 'w-2 h-2' : 'w-2.5 h-2.5'}`} /> La Casa de Juanita Presenta:
-          </h2>
-          <h1 className={`font-serif font-bold text-white tracking-tight leading-none drop-shadow-2xl transition-all ${isJourneyStarted ? 'text-lg' : 'text-4xl'}`}>
-            Contacto de Emergencia <span className={`text-amber-500 ${isJourneyStarted ? 'inline ml-1' : 'block mt-1'}`}>#23</span>
-          </h1>
-          
-          {!isJourneyStarted && (
-            <div className="mt-6 flex items-center gap-4 animate-in fade-in duration-1000">
-              <div className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-200">
-                  Serie Exclusiva
-              </div>
-              <div className="flex -space-x-2">
-                  {[1,2,3].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border border-zinc-900 bg-zinc-800 flex items-center justify-center">
-                          <Heart className="w-2.5 h-2.5 text-amber-500 fill-current" />
-                      </div>
-                  ))}
-              </div>
+    <div class="flex flex-col h-screen max-w-md mx-auto bg-zinc-950 shadow-2xl relative overflow-hidden border-x border-zinc-800">
+        
+        <!-- Header Adaptativo -->
+        <header id="main-header" class="header-expanded relative overflow-hidden flex flex-col justify-end">
+            <!-- Imagen de Portada -->
+            <div class="absolute inset-0 z-0 bg-zinc-900">
+                <img src="https://i.imgur.com/LGE2vU3.png" alt="" class="w-full h-full object-cover opacity-90 transition-transform duration-[2000ms] hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+                <div id="header-overlay-top" class="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-transparent to-transparent"></div>
             </div>
-          )}
-        </div>
 
-        {/* Indicador de Acción Flotante */}
-        <div className={`absolute transition-all duration-500 z-10 ${isJourneyStarted ? 'top-6 right-6 scale-75 opacity-50' : 'top-10 right-6 scale-100 opacity-100'}`}>
-          <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-black shadow-[0_0_30px_rgba(245,158,11,0.5)]">
-              <Zap className="w-6 h-6 fill-current" />
-          </div>
-        </div>
-      </header>
-
-      {/* Ruta Interactiva */}
-      <main className="flex-1 overflow-y-auto p-6 scrollbar-hide pb-28 space-y-8 bg-zinc-950">
-        <div className="relative">
-          <div className="absolute left-6 top-10 bottom-10 w-[1px] bg-zinc-800/40"></div>
-
-          <div className="space-y-12">
-            {steps.map((step, idx) => {
-              const isCompleted = completedSteps.includes(step.id);
-              const isCurrent = !isCompleted && (idx === 0 || completedSteps.includes(steps[idx - 1].id));
-              const isLocked = !isCompleted && !isCurrent;
-
-              return (
-                <div 
-                  key={step.id}
-                  onClick={() => !isLocked && handleStepClick(step)}
-                  className={`relative flex items-center gap-6 cursor-pointer group transition-all duration-500 ${isLocked ? 'opacity-20 scale-95' : 'hover:scale-[1.02]'}`}
-                >
-                  <div className={`z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all ${
-                    isCompleted ? 'bg-amber-500 text-black' : 
-                    isCurrent ? 'bg-white text-black scale-125 ring-4 ring-amber-500/20' : 
-                    'bg-zinc-900 text-zinc-500 border border-zinc-800'
-                  }`}>
-                    {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : step.icon}
-                  </div>
-
-                  <div className={`flex-1 p-5 rounded-[2rem] transition-all border ${
-                    isCurrent ? 'bg-zinc-900/40 border-amber-500/20 shadow-[0_15px_35px_rgba(0,0,0,0.3)]' : 'bg-transparent border-transparent'
-                  }`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-amber-500' : 'text-zinc-600'}`}>
-                          {step.type} • {step.duration}
-                        </span>
-                        <h3 className={`font-bold text-xl ${isCurrent ? 'text-white' : 'text-zinc-500'}`}>{step.title}</h3>
-                      </div>
-                      {isCurrent && <ChevronRight className="w-5 h-5 text-amber-500 mt-2 animate-pulse" />}
+            <div id="header-content" class="px-6 pb-10 relative z-10">
+                <h2 id="brand-tag" class="text-amber-500 text-[10px] font-black uppercase tracking-[0.5em] mb-3 flex items-center gap-2 drop-shadow-lg transition-all">
+                    <i data-lucide="home" class="w-2.5 h-2.5"></i> La Casa de Juanita Presenta:
+                </h2>
+                <h1 id="main-title" class="text-4xl font-serif font-bold text-white tracking-tight leading-none drop-shadow-2xl transition-all">
+                    Contacto de Emergencia <span id="slogan-hash" class="text-amber-500 block mt-1">#23</span>
+                </h1>
+                
+                <div id="header-badges" class="mt-6 flex items-center gap-4 transition-opacity">
+                    <div class="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-200">
+                        Serie Exclusiva
                     </div>
-                  </div>
+                    <div class="flex -space-x-2">
+                        <div class="w-6 h-6 rounded-full border border-zinc-900 bg-zinc-800 flex items-center justify-center"><i data-lucide="heart" class="w-2.5 h-2.5 text-amber-500 fill-current"></i></div>
+                        <div class="w-6 h-6 rounded-full border border-zinc-900 bg-zinc-800 flex items-center justify-center"><i data-lucide="heart" class="w-2.5 h-2.5 text-amber-500 fill-current"></i></div>
+                        <div class="w-6 h-6 rounded-full border border-zinc-900 bg-zinc-800 flex items-center justify-center"><i data-lucide="heart" class="w-2.5 h-2.5 text-amber-500 fill-current"></i></div>
+                    </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-[2.5rem] p-8 text-black relative overflow-hidden shadow-2xl shadow-amber-500/10">
-          <div className="relative z-10">
-            <h3 className="font-serif font-black text-2xl mb-2 italic">¡No te rindas!</h3>
-            <p className="text-black/80 text-sm font-bold mb-6 italic leading-snug">
-              "El Pastor no te sacó de Egipto para que mueras en el desierto. Él va en camino."
-            </p>
-            <button 
-                onClick={() => setShowJournal(true)}
-                className="flex items-center gap-2 text-[10px] font-black uppercase bg-black text-white px-8 py-3.5 rounded-full hover:scale-105 transition-transform shadow-xl"
-            >
-              <PenLine className="w-4 h-4" /> Habla con el Pastor
-            </button>
-          </div>
-          <Zap className="absolute -bottom-10 -right-10 w-48 h-48 text-black/10 -rotate-12" />
-        </div>
-      </main>
-
-      {/* Pantalla Inmersiva */}
-      {currentStep && (
-        <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col animate-in slide-in-from-bottom duration-500">
-          <div className="px-6 pt-12 pb-6 flex items-center justify-between border-b border-zinc-900 bg-zinc-900/50 backdrop-blur-2xl">
-            <button onClick={() => setCurrentStep(null)} className="p-2 text-zinc-500 hover:text-white transition-colors">
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-            <div className="text-center">
-              <span className="text-[10px] font-black uppercase text-amber-500 tracking-[0.3em]">{currentStep.type}</span>
-              <h4 className="font-serif font-bold text-white text-xl tracking-tight">{currentStep.title}</h4>
-            </div>
-            <div className="w-10"></div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-8 py-10 space-y-12">
-            <div className="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 p-10 rounded-[2.5rem] border border-zinc-700/50 shadow-2xl relative">
-              <div className="absolute -top-4 -left-2 text-amber-500/20 text-8xl font-serif">“</div>
-              <div className="flex items-center gap-2 mb-6 text-amber-500 relative z-10">
-                <BookOpen className="w-4 h-4" />
-                <span className="text-[10px] font-black uppercase tracking-widest">{currentStep.content.verse}</span>
-              </div>
-              <p className="text-2xl font-serif italic text-white leading-relaxed relative z-10 drop-shadow-sm">
-                {currentStep.content.scripture}
-              </p>
             </div>
 
-            <div className="space-y-8">
-              <div className="text-zinc-300 leading-relaxed text-xl space-y-8 font-medium">
-                {currentStep.content.body.split('\n\n').map((para, i) => (
-                    <p key={i} className="first-letter:text-5xl first-letter:font-serif first-letter:text-amber-500 first-letter:mr-3 first-letter:font-black first-letter:float-left first-letter:leading-[0.8]">{para}</p>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-12 border-t border-zinc-800">
-              <h5 className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.4em] mb-8 text-center">Reflexión para tu alma</h5>
-              <div className="bg-amber-500/5 p-10 rounded-[2.5rem] border border-amber-500/10 shadow-inner">
-                <p className="text-amber-500 font-serif italic text-2xl text-center leading-relaxed">
-                    "{currentStep.content.reflection}"
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-8 bg-zinc-900/90 backdrop-blur-3xl border-t border-zinc-800">
-            <button 
-              onClick={() => handleComplete(currentStep.id)}
-              className="w-full py-5 bg-white text-black rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-amber-500 transition-all active:scale-[0.97] shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-            >
-              {currentStep.buttonText}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Diario */}
-      {showJournal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[60] flex items-end">
-            <div className="bg-zinc-900 w-full rounded-t-[3.5rem] p-12 animate-in slide-in-from-bottom duration-400 border-t border-zinc-800 shadow-2xl">
-                <div className="flex justify-between items-center mb-10">
-                    <h3 className="text-3xl font-serif font-bold text-white">Mi Diario Secreto</h3>
-                    <button onClick={() => setShowJournal(false)} className="text-zinc-600 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors">Cerrar</button>
+            <!-- Indicador Zap -->
+            <div id="zap-indicator" class="absolute top-10 right-6 z-10 transition-all duration-500">
+                <div class="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-black shadow-[0_0_30px_rgba(245,158,11,0.5)]">
+                    <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
                 </div>
-                <textarea 
-                    className="w-full h-80 bg-zinc-800/40 rounded-3xl p-8 text-white border-2 border-zinc-700 focus:border-amber-500/50 focus:ring-0 text-xl transition-all shadow-inner placeholder:text-zinc-700"
-                    placeholder="Querido Pastor, hoy me di cuenta de que..."
-                    value={journalEntry}
-                    onChange={(e) => setJournalEntry(e.target.value)}
-                ></textarea>
-                <button 
-                    onClick={() => { setShowJournal(false); setJournalEntry(""); }}
-                    className="w-full mt-10 py-5 bg-amber-500 text-black rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-amber-500/20 transition-all active:scale-[0.98]"
-                >
-                    Guardar para la Eternidad
+            </div>
+        </header>
+
+        <!-- Ruta de Contenido -->
+        <main class="flex-1 overflow-y-auto p-6 scrollbar-hide pb-28 space-y-8">
+            <div class="relative">
+                <div class="absolute left-6 top-10 bottom-10 w-[1px] bg-zinc-800/40"></div>
+                <div id="steps-container" class="space-y-12">
+                    <!-- Los pasos se inyectan vía JS -->
+                </div>
+            </div>
+
+            <!-- Banner Motivacional -->
+            <div class="mt-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-[2.5rem] p-8 text-black relative overflow-hidden shadow-2xl">
+                <div class="relative z-10">
+                    <h3 class="font-serif font-black text-2xl mb-2 italic">¡No te rindas!</h3>
+                    <p class="text-black/80 text-sm font-bold mb-6 italic leading-snug">
+                        "El Pastor no te sacó de Egipto para que mueras en el desierto. Él va en camino."
+                    </p>
+                    <button onclick="toggleJournal(true)" class="flex items-center gap-2 text-[10px] font-black uppercase bg-black text-white px-8 py-3.5 rounded-full hover:scale-105 transition-transform">
+                        <i data-lucide="pen-line" class="w-4 h-4"></i> Habla con el Pastor
+                    </button>
+                </div>
+                <i data-lucide="zap" class="absolute -bottom-10 -right-10 w-48 h-48 text-black/10 -rotate-12"></i>
+            </div>
+        </main>
+
+        <!-- Navegación Inferior -->
+        <nav class="h-24 bg-zinc-900/90 backdrop-blur-3xl border-t border-zinc-800/50 flex items-center justify-around px-10">
+            <div class="flex flex-col items-center gap-1.5 text-amber-500 scale-110 cursor-pointer">
+                <i data-lucide="zap" class="w-7 h-7 fill-current"></i>
+                <span class="text-[9px] font-black uppercase tracking-widest">Misión</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
+                <i data-lucide="navigation" class="w-7 h-7"></i>
+                <span class="text-[9px] font-black uppercase tracking-widest">Mapa</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
+                <i data-lucide="anchor" class="w-7 h-7"></i>
+                <span class="text-[9px] font-black uppercase tracking-widest">Ancla</span>
+            </div>
+        </nav>
+
+        <!-- Modal de Sesión -->
+        <div id="session-modal" class="fixed inset-0 bg-zinc-950 z-50 hidden flex-col modal-enter">
+            <div class="px-6 pt-12 pb-6 flex items-center justify-between border-b border-zinc-900 bg-zinc-900/50 backdrop-blur-2xl">
+                <button onclick="closeSession()" class="p-2 text-zinc-500 hover:text-white transition-colors">
+                    <i data-lucide="chevron-left" class="w-8 h-8"></i>
                 </button>
+                <div class="text-center">
+                    <span id="modal-type" class="text-[10px] font-black uppercase text-amber-500 tracking-[0.3em]"></span>
+                    <h4 id="modal-title" class="font-serif font-bold text-white text-xl tracking-tight"></h4>
+                </div>
+                <div class="w-10"></div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-8 py-10 space-y-12">
+                <div class="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 p-10 rounded-[2.5rem] border border-zinc-700/50 shadow-2xl relative">
+                    <div class="absolute -top-4 -left-2 text-amber-500/20 text-8xl font-serif">“</div>
+                    <div class="flex items-center gap-2 mb-6 text-amber-500 relative z-10">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span id="modal-verse" class="text-[10px] font-black uppercase tracking-widest"></span>
+                    </div>
+                    <p id="modal-scripture" class="text-2xl font-serif italic text-white leading-relaxed relative z-10 drop-shadow-sm"></p>
+                </div>
+
+                <div id="modal-body" class="text-zinc-300 leading-relaxed text-xl space-y-8 font-medium"></div>
+
+                <div class="pt-12 border-t border-zinc-800">
+                    <h5 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.4em] mb-8 text-center">Reflexión para tu alma</h5>
+                    <div class="bg-amber-500/5 p-10 rounded-[2.5rem] border border-amber-500/10 shadow-inner">
+                        <p id="modal-reflection" class="text-amber-500 font-serif italic text-2xl text-center leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 bg-zinc-900/90 backdrop-blur-3xl border-t border-zinc-800">
+                <button id="modal-cta" class="w-full py-5 bg-white text-black rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-amber-500 transition-all active:scale-[0.97] shadow-[0_0_40px_rgba(255,255,255,0.15)]"></button>
             </div>
         </div>
-      )}
 
-      {/* Navegación */}
-      <nav className="h-24 bg-zinc-900/90 backdrop-blur-3xl border-t border-zinc-800/50 flex items-center justify-around px-10 fixed bottom-0 left-0 right-0 max-w-md mx-auto">
-        <div className="flex flex-col items-center gap-1.5 text-amber-500 scale-110">
-          <Zap className="w-7 h-7 fill-current" />
-          <span className="text-[9px] font-black uppercase tracking-widest">Misión</span>
+        <!-- Diario -->
+        <div id="journal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[60] hidden items-end">
+            <div class="bg-zinc-900 w-full rounded-t-[3.5rem] p-12 modal-enter border-t border-zinc-800 shadow-2xl">
+                <div class="flex justify-between items-center mb-10">
+                    <h3 class="text-3xl font-serif font-bold text-white">Mi Diario Secreto</h3>
+                    <button onclick="toggleJournal(false)" class="text-zinc-600 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors">Cerrar</button>
+                </div>
+                <textarea id="journal-input" class="w-full h-80 bg-zinc-800/40 rounded-3xl p-8 text-white border-2 border-zinc-800 focus:border-amber-500/50 focus:ring-0 text-xl transition-all shadow-inner placeholder:text-zinc-700" placeholder="Querido Pastor, hoy me di cuenta de que..."></textarea>
+                <button onclick="saveJournal()" class="w-full mt-10 py-5 bg-amber-500 text-black rounded-2xl font-black uppercase tracking-widest shadow-2xl transition-all active:scale-[0.98]">Guardar para la Eternidad</button>
+            </div>
         </div>
-        <div className="flex flex-col items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors">
-          <Navigation className="w-7 h-7" />
-          <span className="text-[9px] font-black uppercase tracking-widest">Mapa</span>
-        </div>
-        <div className="flex flex-col items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors">
-          <Anchor className="w-7 h-7" />
-          <span className="text-[9px] font-black uppercase tracking-widest">Ancla</span>
-        </div>
-      </nav>
     </div>
-  );
-};
 
-export default App;
+    <script>
+        // Datos de la aplicación
+        const steps = [
+            { id: 0, type: "Monólogo", title: "Ovejas con Traje de Marca", icon: "smile", duration: "2 min", buttonText: "¡Soy una oveja, lo admito!", verse: "Reflexión: La Oveja de Ciudad", scripture: "Lobos de Wall Street vs. Ovejas perdidas", reflection: "¿Cuántas veces intentaste rugir esta semana cuando lo que necesitabas era simplemente llamar al Pastor?", body: "¿Ustedes han visto a las ovejas? Son animales... especiales. Yo antes pensaba que las ovejas eran como los perros... ¡No! La oveja es el único animal que puede perderse en un jardín de dos por dos metros.\n\nUna vez vi a un tipo en un aeropuerto, estresado, con tres maletas, dos celulares, una tablet y gritándole a alguien... El hombre estaba colapsando. Y pensé: 'Esa es una oveja con traje de marca'. Nos creemos leones de la industria, pero a la primera crisis, balamos como una oveja perdida.\n\nHoy no vengo a hablarte de cómo ser un león. Vengo a decirte que está bien ser oveja, siempre y cuando tengas al Pastor correcto." },
+            { id: 1, type: "La Primicia", title: "El Salmo más Amado", icon: "heart", duration: "2 min", buttonText: "¡Dame el manual de supervivencia!", verse: "Juan 10:11, 14", scripture: "“Yo soy el buen pastor... y conozco mis ovejas y ellas me conocen”.", reflection: "El Pastor te conoce por nombre, no por tu puesto en el organigrama. ¿Estás listo para escucharlo?", body: "¡Escucha esto! El Salmo 23 no es solo poesía para funerales, ¡es un manual de supervivencia! Notarás tres cosas impresionantes que hace el Buen Pastor por ti: Proveer, Proteger y Prometer. Prepárate." },
+            { id: 2, type: "El Suministro", title: "Cero Carencias", icon: "zap", duration: "4 min", buttonText: "¡Nada me faltará!", verse: "Salmo 23:1", scripture: "“El Señor es mi pastor, nada me faltará”.", reflection: "Deja de mirar la escasez en tu mano y empieza a mirar la abundancia en la Suya.", body: "¡Vaya! “Faltar” significa “carecer”. Debido a que nuestro Pastor provee todo lo que necesitamos, ¡no carecemos de nada! Y aunque tal vez no recibas todo lo que quieres, Él te da todo lo que necesitas.\n\nDeja de esforzarte hasta el colapso. Cuando confías, Él abre puertas que ningún hombre puede cerrar." },
+            { id: 3, type: "Restauración", title: "Spa para el Alma", icon: "wind", duration: "5 min", buttonText: "¡Restaura mi alma ahora!", verse: "Salmo 23:2-3", scripture: "“En lugares de verdes pastos me hace descansar... Él restaura mi alma”.", reflection: "¿Qué parte de tu alma está hoy 'desgastada'? Entrégasela al Pastor ahora mismo.", body: "Los verdes pastos son Su Palabra; las aguas de reposo son Su paz. Nuestra alma necesita ser restaurada de lo que nos desgasta. Tu Buen Pastor no solo quiere dejarte como estabas, ¡quiere llevarte a un lugar mejor!" },
+            { id: 4, type: "Dirección", title: "GPS de Justicia", icon: "navigation", duration: "3 min", buttonText: "¡Sigo Tus pasos, Pastor!", verse: "Salmo 23:3", scripture: "“Me guía por senderos de justicia por amor de Su nombre”.", reflection: "Si Dios es tu GPS, ¿por qué sigues tratando de manejar tú el vehículo?", body: "Justicia es estar en buena relación con Dios. Al permitir que tu Buen Pastor te guíe, permaneces en una relación estrecha con Él y nada te faltará. Déjate llevar." },
+            { id: 5, type: "Defensa", title: "Caminando entre Sombras", icon: "shield", duration: "4 min", buttonText: "¡No tengo miedo!", verse: "Salmo 23:4", scripture: "“Aunque pase por el valle de sombra... no temeré mal alguno”.", reflection: "El valle tiene salida. La sombra es solo eso, una sombra. El Pastor es la luz.", body: "Incluso en el valle de sombra de muerte, no debemos temer. Jesús aniquiló a la muerte en la cruz. Descansa en la seguridad de que Él es tu protector. ¡Si Él está contigo, la sombra no tiene poder!" },
+            { id: 6, type: "La Herencia", title: "Tus Guardaespaldas", icon: "star", duration: "3 min", buttonText: "¡Recibo mis escoltas del Cielo!", verse: "Salmo 23:6", scripture: "“Ciertamente el bien y la misericordia me seguirán...”.", reflection: "Mira atrás por un segundo... ¿puedes ver la bondad de Dios persiguiéndote?", body: "“Ciertamente” es un hecho. Tienes dos guardaespaldas celestiales siguiéndote los talones todos los días. ¡Recibes provisión, protección y eternidad!" },
+            { id: 7, type: "El Operativo", title: "Rescate en el Día Gris", icon: "cloud-rain", duration: "4 min", buttonText: "¡Viene a mi rescate!", verse: "Ezequiel 34:12", scripture: "“Como un pastor vela... así Yo velaré por Mis ovejas...”.", reflection: "¿Estás listo para dejarte rescatar de ese día gris?", body: "Dios dice: “Yo voy en camino”. Jesús dio su vida para que pudiéramos ser libertados del estrés, la ansiedad y el temor. Él promete rescatarte hoy mismo." },
+            { id: 8, type: "Conexión", title: "Hablando con el Jefe", icon: "anchor", duration: "2 min", buttonText: "Amén y Amén", verse: "La Oración del Corazón", scripture: "Amén.", reflection: "Tómate un café con el Pastor ahora. Habla con Él sin filtros.", body: "Jesús, gracias por ser mi Buen Pastor. Gracias por prometer protección y provisión. Ayúdame a escuchar tu voz y a seguirte cada día de mi vida. Amén." }
+        ];
+
+        let completedSteps = [];
+        let isJourneyStarted = false;
+
+        // Iniciar Lucide
+        lucide.createIcons();
+
+        // Renderizar Pasos
+        function renderSteps() {
+            const container = document.getElementById('steps-container');
+            container.innerHTML = '';
+            
+            steps.forEach((step, idx) => {
+                const isCompleted = completedSteps.includes(step.id);
+                const isCurrent = !isCompleted && (idx === 0 || completedSteps.includes(steps[idx - 1].id));
+                const isLocked = !isCompleted && !isCurrent;
+                
+                const stepEl = document.createElement('div');
+                stepEl.className = `relative flex items-center gap-6 cursor-pointer group transition-all duration-500 ${isLocked ? 'step-locked' : 'hover:scale-[1.02]'}`;
+                if (!isLocked) stepEl.onclick = () => openSession(step);
+                
+                stepEl.innerHTML = `
+                    <div class="z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all ${
+                        isCompleted ? 'bg-amber-500 text-black' : 
+                        isCurrent ? 'bg-white text-black scale-125 ring-4 ring-amber-500/20' : 
+                        'bg-zinc-900 text-zinc-500 border border-zinc-800'
+                    }">
+                        <i data-lucide="${isCompleted ? 'check-circle-2' : step.icon}" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 p-5 rounded-[2rem] transition-all border ${
+                        isCurrent ? 'bg-zinc-900/40 border-amber-500/20 shadow-[0_15px_35px_rgba(0,0,0,0.3)]' : 'bg-transparent border-transparent'
+                    }">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-amber-500' : 'text-zinc-600'}">
+                                    ${step.type} • ${step.duration}
+                                </span>
+                                <h3 class="font-bold text-xl ${isCurrent ? 'text-white' : 'text-zinc-500'}">${step.title}</h3>
+                            </div>
+                            ${isCurrent ? '<i data-lucide="chevron-right" class="w-5 h-5 text-amber-500 mt-2 animate-pulse"></i>' : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(stepEl);
+            });
+            lucide.createIcons();
+        }
+
+        // Lógica de UI
+        function openSession(step) {
+            if (!isJourneyStarted) {
+                isJourneyStarted = true;
+                const header = document.getElementById('main-header');
+                header.classList.remove('header-expanded');
+                header.classList.add('header-collapsed');
+                
+                document.getElementById('brand-tag').classList.replace('text-[10px]', 'text-[7px]');
+                document.getElementById('brand-tag').classList.add('opacity-60', 'mb-0.5');
+                document.getElementById('main-title').classList.replace('text-4xl', 'text-lg');
+                document.getElementById('slogan-hash').classList.replace('block', 'inline');
+                document.getElementById('slogan-hash').classList.add('ml-1');
+                document.getElementById('header-badges').classList.add('hidden');
+                document.getElementById('zap-indicator').classList.add('top-6', 'scale-75', 'opacity-50');
+            }
+
+            const modal = document.getElementById('session-modal');
+            document.getElementById('modal-type').innerText = step.type;
+            document.getElementById('modal-title').innerText = step.title;
+            document.getElementById('modal-verse').innerText = step.verse;
+            document.getElementById('modal-scripture').innerText = step.scripture;
+            document.getElementById('modal-reflection').innerText = step.reflection;
+            document.getElementById('modal-cta').innerText = step.buttonText;
+            document.getElementById('modal-cta').onclick = () => completeStep(step.id);
+            
+            // Inyectar body con capitular
+            const bodyContent = step.body.split('\n\n').map(p => 
+                `<p><span class="first-letter:text-5xl first-letter:font-serif first-letter:text-amber-500 first-letter:mr-3 first-letter:font-black first-letter:float-left first-letter:leading-[0.8]">${p}</span></p>`
+            ).join('');
+            document.getElementById('modal-body').innerHTML = bodyContent;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeSession() {
+            const modal = document.getElementById('session-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function completeStep(id) {
+            if (!completedSteps.includes(id)) {
+                completedSteps.push(id);
+            }
+            closeSession();
+            renderSteps();
+        }
+
+        function toggleJournal(show) {
+            const modal = document.getElementById('journal-modal');
+            modal.style.display = show ? 'flex' : 'none';
+        }
+
+        function saveJournal() {
+            const text = document.getElementById('journal-input').value;
+            if (text) {
+                // Aquí podrías guardar localmente si quisieras
+                document.getElementById('journal-input').value = "";
+                toggleJournal(false);
+            }
+        }
+
+        // Inicializar
+        renderSteps();
+    </script>
+</body>
+</html>
